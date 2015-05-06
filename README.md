@@ -1,38 +1,72 @@
 # Rglib
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/rglib`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+The simple Library gem
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'rglib'
+gem 'rglib', :git => "git://github.com/gremax/rglib"
 ```
 
 And then execute:
 
     $ bundle
 
-Or install it yourself as:
-
-    $ gem install rglib
-
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+require 'rglib'
 
-## Development
+# Library initialize
+lib = Rglib::Library.new
+# or get all Library data from file
+lib = Rglib::Library.load
+# or
+lib = Rglib::Library.load('filename.db')
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `bin/console` for an interactive prompt that will allow you to experiment.
+# Add authors
+lib << Rglib::Author.new("Mark Twain", "biography")
+lib << Rglib::Author.new("F. Scott Fitzgerald", "biography")
+lib << Rglib::Author.new("George R. R. Martin", "biography")
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release` to create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+# Add books
+lib << Rglib::Book.new("The Adventures of Tom Sawyer", lib.authors[0])
+lib << Rglib::Book.new("The Great Gatsby", lib.authors[1])
+lib << Rglib::Book.new("A Game of Thrones", lib.authors[2])
+
+# Add readers
+lib << Rglib::Reader.new("Jon Snow", { email: "jon.snow@bastards.org", city: "Winterfell" })
+lib << Rglib::Reader.new("Tyrion Lannister", { email: "tyrion@halfman.org",  city: "Casterly Rock" })
+lib << Rglib::Reader.new("Arya Stark", { email: "arya@stark.org", city: "Winterfell" })
+
+# Add a new order
+lib << Rglib::Order.new(lib.books[0], lib.readers[2])
+lib << Rglib::Order.new(lib.books[1], lib.readers[1])
+lib << Rglib::Order.new(lib.books[2], lib.readers[0])
+
+# Save all Library data to file
+lib.save
+# or
+lib.save('filename.db')
+
+# Who often takes the book
+book = lib.books.first
+lib.who_often_takes_the_book(book)
+
+# What is the most popular book
+lib.most_popular_book
+
+# How many people ordered one of the three most popular books
+lib.how_many_people_ordered_one_of_the_three_most_popular_books.each do |book, count|
+  puts "\"#{book.title}\" by #{book.author.name} — #{count} readers."
+end
+```
 
 ## Contributing
 
-1. Fork it ( https://github.com/[my-github-username]/rglib/fork )
+1. Fork it ( https://github.com/gremax/rglib/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
