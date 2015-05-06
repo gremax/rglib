@@ -23,21 +23,17 @@ module Rglib
 
     def who_often_takes_the_book book
       orders = self.orders.select { |order| order.book == book }
-      readers = orders.map { |order| order.reader }
-      readers = readers.inject(Hash.new{0}) { |mem, var| mem[var] +=1; mem }
-      readers.max_by { |key, value| value }
+      most_freqent(orders.map { |order| order.reader }).max_by { |key, value| value }
     end
 
     def most_popular_book
       books = self.orders.map { |order| order.book }
-      books = books.inject(Hash.new{0}) { |mem, var| mem[var] +=1; mem }
-      books.max_by { |key, value| value }[0]
+      most_freqent(books).max_by { |key, value| value }[0]
     end
 
     def how_many_people_ordered_one_of_the_three_most_popular_books
       books = self.orders.map { |order| order.book }
-      books = books.inject(Hash.new{0}) { |mem, var| mem[var] +=1; mem }
-      books.sort_by { |key, value| value }.reverse[0..2]
+      most_freqent(books).sort_by { |key, value| value }.reverse[0..2]
     end
 
     def save(file = 'library.db')
@@ -57,6 +53,12 @@ module Rglib
         p "#{file} not found. Creating the new library. Done."
         self.new
       end
+    end
+
+    private
+
+    def most_freqent(data)
+      data.inject(Hash.new{0}) { |mem, var| mem[var] +=1; mem }
     end
   end
 end
