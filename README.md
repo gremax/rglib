@@ -1,4 +1,4 @@
-# Rglib
+# Rglib [![Build Status](https://travis-ci.org/gremax/rglib.svg?branch=master)](https://travis-ci.org/gremax/rglib)
 
 The simple Library gem
 
@@ -63,6 +63,10 @@ lib.how_many_people_ordered_one_of_the_three_most_popular_books.each do |book, c
   puts "\"#{book.title}\" by #{book.author.name} — #{count} readers."
 end
 ```
+
+## Tests
+
+    $ bundle exec rspec
 
 ## Contributing
 
