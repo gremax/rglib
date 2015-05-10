@@ -30,72 +30,86 @@ describe Rglib do
   subject(:order)  { @lib.orders.first }
 
   describe described_class::Author do
-    it "should respond to name" do
+    it "should respond to 'name'" do
       expect(author.name).to eq("Mark Twain")
     end
 
-    it "should respond to biography" do
+    it "should respond to 'biography'" do
       expect(author.biography).to eq("biography")
     end
 
-    it "should respond to to_s method" do
+    it "should respond to 'to_s'" do
       expect(author.to_s).to eq("Mark Twain. biography")
     end
   end
 
   describe described_class::Book do
-    it "should respond to title" do
+    it "should respond to 'title'" do
       expect(book.title).to eq("The Adventures of Tom Sawyer")
     end
 
-    it "should respond to author" do
+    it "should respond to 'author'" do
       expect(book.author).to eq(author)
     end
 
-    it "should respond to to_s method" do
+    it "should respond to 'to_s'" do
       expect(book.to_s).to eq("\"The Adventures of Tom Sawyer\" by Mark Twain")
     end
   end
 
   describe described_class::Order do
-    it "should respond to book" do
+    it "should respond to 'book'" do
       expect(order.book).to eq(book)
     end
 
-    it "should respond to reader" do
+    it "should respond to 'reader'" do
       expect(order.reader).to eq(reader)
     end
 
-    it "should respond to date" do
+    it "should respond to 'date'" do
       expect(order.date).to eq(Time.now.strftime("%Y-%m-%d at %H:%M"))
     end
 
-    it "should respond to to_s method" do
+    it "should respond to 'to_s'" do
       expect(order.to_s).to eq("\"The Adventures of Tom Sawyer\" ordered by Arya Stark. Date: #{order.date}.")
     end
   end
 
   describe described_class::Reader do
-    it "should respond to name" do
+    it "should respond to 'name'" do
       expect(reader.name).to eq("Arya Stark")
     end
 
-    it "should respond to to_s method" do
+    it "should respond to 'to_s'" do
       expect(reader.to_s).to eq("Arya Stark from Winterfell <arya@stark.org>")
     end
   end
 
   describe described_class::Library do
-    it "can show who often takes the book" do
+    it "can shows who often takes the book" do
       expect(@lib.who_often_takes_the_book(book)).to eq([reader, 2])
     end
 
-    it "can show the most popular book" do
+    it "can shows the most popular book" do
       expect(@lib.most_popular_book).to eq(book)
     end
 
-    it "can show how many people ordered one of the three most popular books" do
-      expect(@lib.how_many_people_ordered_one_of_the_three_most_popular_books).to eq([[book, 4], [@lib.books[1], 1], [@lib.books[2], 1]])
+    it "can shows how many people ordered one of the three most popular books" do
+      expect(@lib.how_many_people_ordered_one_of_the_three_most_popular_books).to match_array([[book, 4], [@lib.books[1], 1], [@lib.books[2], 1]])
+    end
+    
+    describe "Can works with a file database" do
+      after(:all) { File.delete('library.db') }
+
+      it "creates the 'library.db' file" do
+        @lib.save
+        expect(File.exists?('library.db')).to be(true)
+      end
+
+      it "loads from the 'library.db' file" do
+        @newlib = Rglib::Library.load
+        expect(@newlib).not_to be_nil
+      end
     end
   end
 end
